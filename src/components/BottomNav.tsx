@@ -1,9 +1,10 @@
 import { NavLink } from "react-router-dom";
-import { Home, BarChart3, Settings } from "lucide-react";
+import { Home, BarChart3, BookOpen, Settings } from "lucide-react";
 
 const tabs = [
   { to: "/", icon: Home, label: "Home" },
   { to: "/stats", icon: BarChart3, label: "Stats" },
+  { to: "/learn", icon: BookOpen, label: "Learn" },
   { to: "/settings", icon: Settings, label: "Settings" },
 ];
 
@@ -17,17 +18,16 @@ export function BottomNav() {
             to={to}
             end
             className={({ isActive }) =>
-              `flex flex-col items-center gap-1 px-4 py-2 transition-colors ${
+              `flex flex-col items-center gap-1 px-3 py-2 transition-colors ${
                 isActive ? "text-gold" : "text-muted-foreground"
               }`
             }
           >
             <Icon className="w-5 h-5" />
-            <span className="text-xs font-medium">{label}</span>
+            <span className="text-[10px] font-medium">{label}</span>
           </NavLink>
         ))}
       </div>
-      {/* Safe area padding for iOS */}
       <div className="h-[env(safe-area-inset-bottom)]" />
     </nav>
   );
