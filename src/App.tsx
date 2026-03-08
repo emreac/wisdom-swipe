@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { BottomNav } from "@/components/BottomNav";
 import HomePage from "@/pages/HomePage";
 import StatsPage from "@/pages/StatsPage";
+import LearnPage from "@/pages/LearnPage";
 import SettingsPage from "@/pages/SettingsPage";
 import NotFound from "@/pages/NotFound";
 import { useSwipeStore } from "@/hooks/useSwipeStore";
@@ -21,8 +22,14 @@ const App = () => {
                 remaining={store.remaining}
                 total={store.total}
                 swipe={store.swipe}
-                reset={store.reset}
+                loadMore={store.loadMore}
                 likedCount={store.likedCount}
+                sessionComplete={store.sessionComplete}
+                streak={store.streak}
+                dailyLimit={store.dailyLimit}
+                topSchool={store.topSchool}
+                topPhilosopher={store.topPhilosopher}
+                schoolScores={store.schoolScores}
               />
             }
           />
@@ -40,6 +47,7 @@ const App = () => {
               />
             }
           />
+          <Route path="/learn" element={<LearnPage />} />
           <Route
             path="/settings"
             element={
