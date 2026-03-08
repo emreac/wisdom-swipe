@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { allQuotes, Quote } from "@/data/philosophers";
 
 export interface SwipeRecord {
@@ -24,31 +24,23 @@ function getTodayKey() {
 function getStreak(): number {
   const raw = localStorage.getItem("philosophia_streak");
   if (!raw) return 0;
-  try {
-    const data = JSON.parse(raw);
-    return data.count || 0;
-  } catch { return 0; }
+  try { return JSON.parse(raw).count || 0; } catch { return 0; }
 }
 
 function getLastSessionDate(): string | null {
   const raw = localStorage.getItem("philosophia_streak");
   if (!raw) return null;
-  try {
-    return JSON.parse(raw).lastDate || null;
-  } catch { return null; }
+  try { return JSON.parse(raw).lastDate || null; } catch { return null; }
 }
 
 function updateStreak() {
   const today = getTodayKey();
   const lastDate = getLastSessionDate();
   const currentStreak = getStreak();
-
-  if (lastDate === today) return; // already counted today
-
+  if (lastDate === today) return;
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   const yesterdayKey = yesterday.toISOString().slice(0, 10);
-
   const newStreak = lastDate === yesterdayKey ? currentStreak + 1 : 1;
   localStorage.setItem("philosophia_streak", JSON.stringify({ count: newStreak, lastDate: today }));
 }
@@ -82,13 +74,22 @@ function addSeenIds(ids: number[]) {
 function generateBatch(batchSize: number): Quote[] {
   const seen = new Set(getSeenIds());
   const unseen = allQuotes.filter(q => !seen.has(q.id));
-  
   if (unseen.length >= batchSize) {
     return shuffleArray(unseen).slice(0, batchSize);
   }
-  // If we've seen most, reset and reshuffle
   localStorage.removeItem("philosophia_seen");
   return shuffleArray([...allQuotes]).slice(0, batchSize);
+}
+
+// Favorites persistence
+function getFavorites(): Quote[] {
+  const raw = localStorage.getItem("philosophia_favorites");
+  if (!raw) return [];
+  try { return JSON.parse(raw); } catch { return []; }
+}
+
+function saveFavorites(favs: Quote[]) {
+  localStorage.setItem("philosophia_favorites", JSON.stringify(favs));
 }
 
 export function useSwipeStore() {
@@ -103,6 +104,7 @@ export function useSwipeStore() {
   const [history, setHistory] = useState<SwipeRecord[]>([]);
   const [sessionComplete, setSessionComplete] = useState(remainingToday === 0);
   const [streak, setStreak] = useState(getStreak);
+  const [favorites, setFavorites] = useState<Quote[]>(getFavorites);
 
   const currentQuote = currentIndex < batch.length ? batch[currentIndex] : null;
   const remaining = batch.length - currentIndex;
@@ -115,9 +117,8 @@ export function useSwipeStore() {
     addSeenIds([quote.id]);
     const newDailyCount = getDailySwipedCount() + 1;
     setDailySwipedCount(newDailyCount);
-    
+
     if (currentIndex + 1 >= batch.length) {
-      // Session done
       updateStreak();
       setStreak(getStreak());
       setSessionComplete(true);
@@ -125,11 +126,26 @@ export function useSwipeStore() {
     setCurrentIndex((i) => i + 1);
   }, [currentIndex, batch]);
 
+  const addFavorite = useCallback((quote: Quote) => {
+    setFavorites((prev) => {
+      if (prev.some((q) => q.id === quote.id)) return prev;
+      const updated = [...prev, quote];
+      saveFavorites(updated);
+      return updated;
+    });
+  }, []);
+
+  const removeFavorite = useCallback((quoteId: number) => {
+    setFavorites((prev) => {
+      const updated = prev.filter((q) => q.id !== quoteId);
+      saveFavorites(updated);
+      return updated;
+    });
+  }, []);
+
   const loadMore = useCallback(() => {
-    // This generates new quotes — "endless" but still respects daily limit
-    const newBatch = generateBatch(DAILY_LIMIT);
-    // Reset daily count for new session
     localStorage.setItem("philosophia_daily", JSON.stringify({ date: getTodayKey(), count: 0 }));
+    const newBatch = generateBatch(DAILY_LIMIT);
     setBatch(newBatch);
     setCurrentIndex(0);
     setHistory([]);
@@ -146,9 +162,8 @@ export function useSwipeStore() {
     setSessionComplete(false);
   }, []);
 
-  // Stats computation
+  // Stats
   const likedRecords = history.filter((r) => r.liked);
-
   const philosopherScores: Record<string, number> = {};
   const schoolScores: Record<string, number> = {};
 
@@ -178,5 +193,8 @@ export function useSwipeStore() {
     schoolScores,
     topPhilosopher: topPhilosopher ? { name: topPhilosopher[0], count: topPhilosopher[1] } : null,
     topSchool: topSchool ? { name: topSchool[0], count: topSchool[1] } : null,
+    favorites,
+    addFavorite,
+    removeFavorite,
   };
 }
