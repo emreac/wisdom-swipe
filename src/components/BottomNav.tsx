@@ -1,14 +1,17 @@
 import { NavLink } from "react-router-dom";
 import { Home, BarChart3, BookOpen, Settings } from "lucide-react";
-
-const tabs = [
-  { to: "/", icon: Home, label: "Home" },
-  { to: "/stats", icon: BarChart3, label: "Stats" },
-  { to: "/learn", icon: BookOpen, label: "Learn" },
-  { to: "/settings", icon: Settings, label: "Settings" },
-];
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export function BottomNav() {
+  const { t } = useLanguage();
+
+  const tabs = [
+    { to: "/", icon: Home, label: t("nav.home") },
+    { to: "/stats", icon: BarChart3, label: t("nav.stats") },
+    { to: "/learn", icon: BookOpen, label: t("nav.learn") },
+    { to: "/settings", icon: Settings, label: t("nav.settings") },
+  ];
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-xl border-t border-border">
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
