@@ -6,9 +6,10 @@ interface SwipeCardProps {
   quote: Quote;
   onSwipe: (liked: boolean) => void;
   onFavorite: (quote: Quote) => void;
+  isFavorited?: boolean;
 }
 
-export function SwipeCard({ quote, onSwipe, onFavorite }: SwipeCardProps) {
+export function SwipeCard({ quote, onSwipe, onFavorite, isFavorited }: SwipeCardProps) {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-15, 15]);
   const likeOpacity = useTransform(x, [0, 100], [0, 1]);
@@ -87,7 +88,7 @@ export function SwipeCard({ quote, onSwipe, onFavorite }: SwipeCardProps) {
           onClick={(e) => { e.stopPropagation(); onFavorite(quote); }}
           className="w-12 h-12 rounded-full bg-surface-elevated border border-border flex items-center justify-center hover:border-red-400 transition-colors self-center"
         >
-          <Heart className="w-5 h-5 text-red-400" />
+          <Heart className="w-5 h-5 text-red-400" fill={isFavorited ? "currentColor" : "none"} />
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); onSwipe(true); }}

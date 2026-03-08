@@ -17,12 +17,13 @@ interface HomePageProps {
   topPhilosopher: { name: string; count: number } | null;
   schoolScores: Record<string, number>;
   addFavorite: (quote: Quote) => void;
+  favorites: Quote[];
 }
 
 export default function HomePage({
   currentQuote, remaining, total, swipe, loadMore,
   likedCount, sessionComplete, streak, dailyLimit,
-  topSchool, topPhilosopher, schoolScores, addFavorite,
+  topSchool, topPhilosopher, schoolScores, addFavorite, favorites,
 }: HomePageProps) {
   const progress = total > 0 ? ((total - remaining) / total) * 100 : 0;
 
@@ -139,6 +140,7 @@ export default function HomePage({
               quote={currentQuote}
               onSwipe={swipe}
               onFavorite={addFavorite}
+              isFavorited={favorites.some(f => f.id === currentQuote.id)}
             />
           ) : (
             <div className="text-center space-y-4">
