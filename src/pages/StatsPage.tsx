@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { schoolDescriptions, philosophers, Quote } from "@/data/philosophers";
 import { Brain, TrendingUp, Heart, Zap, X } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
+import { getTranslatedQuoteText } from "@/i18n/quoteTranslations";
 
 interface StatsPageProps {
   history: any[];
@@ -20,6 +22,7 @@ export default function StatsPage({
   topPhilosopher, topSchool,
   favorites, removeFavorite,
 }: StatsPageProps) {
+  const { t, language } = useLanguage();
   const totalSwiped = history.length;
   const philosopherEmoji = (name: string) => philosophers.find(p => p.name === name)?.emoji || "🧠";
 
@@ -31,9 +34,9 @@ export default function StatsPage({
     return (
       <div className="flex flex-col items-center justify-center min-h-screen px-4 pb-24">
         <Brain className="w-16 h-16 text-muted-foreground mb-4" />
-        <h2 className="font-serif text-xl text-foreground mb-2">No Data Yet</h2>
+        <h2 className="font-serif text-xl text-foreground mb-2">{t("stats.noData")}</h2>
         <p className="text-muted-foreground text-center text-sm">
-          Start swiping quotes on the Home tab to discover your philosophical identity.
+          {t("stats.noDataDesc")}
         </p>
       </div>
     );
@@ -42,8 +45,8 @@ export default function StatsPage({
   return (
     <div className="px-4 pt-6 pb-24 max-w-lg mx-auto space-y-6">
       <div className="text-center">
-        <h1 className="text-2xl font-serif text-gold">Your Philosophy</h1>
-        <p className="text-muted-foreground text-sm mt-1">{totalSwiped} quotes analyzed</p>
+        <h1 className="text-2xl font-serif text-gold">{t("stats.title")}</h1>
+        <p className="text-muted-foreground text-sm mt-1">{t("stats.analyzed", { count: totalSwiped })}</p>
       </div>
 
       {/* Top Match Card */}
@@ -55,7 +58,7 @@ export default function StatsPage({
         >
           <div className="flex items-center gap-2 mb-3">
             <Zap className="w-5 h-5 text-gold" />
-            <span className="text-xs font-medium text-gold uppercase tracking-wider">Your Philosophy</span>
+            <span className="text-xs font-medium text-gold uppercase tracking-wider">{t("stats.yourPhilosophy")}</span>
           </div>
           <h2 className="font-serif text-3xl text-foreground mb-2">{topSchool.name}</h2>
           <p className="text-muted-foreground text-sm leading-relaxed">
@@ -67,9 +70,9 @@ export default function StatsPage({
       {/* Quick Stats */}
       <div className="grid grid-cols-3 gap-3">
         {[
-          { label: "Agreed", value: likedCount, icon: Heart, color: "text-gold" },
-          { label: "Passed", value: dislikedCount, icon: TrendingUp, color: "text-muted-foreground" },
-          { label: "Total", value: totalSwiped, icon: Brain, color: "text-foreground" },
+          { label: t("stats.agreed"), value: likedCount, icon: Heart, color: "text-gold" },
+          { label: t("stats.passed"), value: dislikedCount, icon: TrendingUp, color: "text-muted-foreground" },
+          { label: t("stats.total"), value: totalSwiped, icon: Brain, color: "text-foreground" },
         ].map(({ label, value, icon: Icon, color }) => (
           <div key={label} className="bg-card rounded-xl p-4 border border-border text-center">
             <Icon className={`w-4 h-4 ${color} mx-auto mb-1`} />
@@ -84,32 +87,35 @@ export default function StatsPage({
         <div className="bg-card rounded-2xl p-6 border border-border">
           <div className="flex items-center gap-2 mb-4">
             <Heart className="w-5 h-5 text-red-400" />
-            <h3 className="font-serif text-lg text-foreground">Favorites</h3>
+            <h3 className="font-serif text-lg text-foreground">{t("stats.favorites")}</h3>
             <span className="text-xs text-muted-foreground ml-auto">{favorites.length}</span>
           </div>
           <div className="space-y-3">
-            {favorites.map((quote, i) => (
-              <motion.div
-                key={quote.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="bg-surface rounded-xl p-4 border border-border relative group"
-              >
-                <button
-                  onClick={() => removeFavorite(quote.id)}
-                  className="absolute top-3 right-3 w-6 h-6 rounded-full bg-surface-elevated border border-border flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            {favorites.map((quote, i) => {
+              const displayText = getTranslatedQuoteText(quote.id, language) || quote.text;
+              return (
+                <motion.div
+                  key={quote.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="bg-surface rounded-xl p-4 border border-border relative group"
                 >
-                  <X className="w-3 h-3 text-muted-foreground" />
-                </button>
-                <p className="font-serif text-sm text-foreground italic leading-relaxed pr-6">
-                  "{quote.text}"
-                </p>
-                <p className="text-xs text-gold mt-2">
-                  {quote.emoji} {quote.philosopher} · {quote.school}
-                </p>
-              </motion.div>
-            ))}
+                  <button
+                    onClick={() => removeFavorite(quote.id)}
+                    className="absolute top-3 right-3 w-6 h-6 rounded-full bg-surface-elevated border border-border flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="w-3 h-3 text-muted-foreground" />
+                  </button>
+                  <p className="font-serif text-sm text-foreground italic leading-relaxed pr-6">
+                    "{displayText}"
+                  </p>
+                  <p className="text-xs text-gold mt-2">
+                    {quote.emoji} {quote.philosopher} · {quote.school}
+                  </p>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -117,7 +123,7 @@ export default function StatsPage({
       {/* School Breakdown */}
       {sortedSchools.length > 0 && (
         <div className="bg-card rounded-2xl p-6 border border-border">
-          <h3 className="font-serif text-lg text-foreground mb-4">School Affinity</h3>
+          <h3 className="font-serif text-lg text-foreground mb-4">{t("stats.schoolAffinity")}</h3>
           <div className="space-y-3">
             {sortedSchools.map(([school, count], i) => (
               <motion.div
@@ -147,7 +153,7 @@ export default function StatsPage({
       {/* Philosopher Ranking */}
       {sortedPhilosophers.length > 0 && (
         <div className="bg-card rounded-2xl p-6 border border-border">
-          <h3 className="font-serif text-lg text-foreground mb-4">Philosopher Ranking</h3>
+          <h3 className="font-serif text-lg text-foreground mb-4">{t("stats.philosopherRanking")}</h3>
           <div className="space-y-3">
             {sortedPhilosophers.map(([name, count], i) => (
               <motion.div

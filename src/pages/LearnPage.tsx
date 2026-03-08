@@ -1,19 +1,21 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { schoolDetails } from "@/data/philosophers";
-import { ChevronDown, BookOpen } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const schools = Object.entries(schoolDetails);
 
 export default function LearnPage() {
   const [openSchool, setOpenSchool] = useState<string | null>(null);
+  const { t } = useLanguage();
 
   return (
     <div className="px-4 pt-6 pb-24 max-w-lg mx-auto space-y-5">
       <div className="text-center mb-2">
-        <h1 className="text-2xl font-serif text-gold">Learn</h1>
+        <h1 className="text-2xl font-serif text-gold">{t("learn.title")}</h1>
         <p className="text-muted-foreground text-sm mt-1">
-          Explore the schools of thought
+          {t("learn.subtitle")}
         </p>
       </div>
 
@@ -57,7 +59,7 @@ export default function LearnPage() {
 
                       <div>
                         <h4 className="text-xs font-semibold text-gold uppercase tracking-wider mb-2">
-                          Key Ideas
+                          {t("learn.keyIdeas")}
                         </h4>
                         <ul className="space-y-1.5">
                           {info.keyIdeas.map((idea) => (
@@ -71,7 +73,7 @@ export default function LearnPage() {
 
                       <div>
                         <h4 className="text-xs font-semibold text-gold uppercase tracking-wider mb-2">
-                          Key Figures
+                          {t("learn.keyFigures")}
                         </h4>
                         <div className="flex flex-wrap gap-2">
                           {info.keyFigures.map((figure) => (
