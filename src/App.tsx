@@ -1,27 +1,60 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+import { BottomNav } from "@/components/BottomNav";
+import HomePage from "@/pages/HomePage";
+import StatsPage from "@/pages/StatsPage";
+import SettingsPage from "@/pages/SettingsPage";
+import NotFound from "@/pages/NotFound";
+import { useSwipeStore } from "@/hooks/useSwipeStore";
 
-const queryClient = new QueryClient();
+const App = () => {
+  const store = useSwipeStore();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+  return (
+    <BrowserRouter>
+      <div className="min-h-screen bg-background">
         <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route
+            path="/"
+            element={
+              <HomePage
+                currentQuote={store.currentQuote}
+                remaining={store.remaining}
+                total={store.total}
+                swipe={store.swipe}
+                reset={store.reset}
+                likedCount={store.likedCount}
+              />
+            }
+          />
+          <Route
+            path="/stats"
+            element={
+              <StatsPage
+                history={store.history}
+                likedCount={store.likedCount}
+                dislikedCount={store.dislikedCount}
+                philosopherScores={store.philosopherScores}
+                schoolScores={store.schoolScores}
+                topPhilosopher={store.topPhilosopher}
+                topSchool={store.topSchool}
+              />
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <SettingsPage
+                onReset={store.reset}
+                totalSwiped={store.history.length}
+              />
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+        <BottomNav />
+      </div>
+    </BrowserRouter>
+  );
+};
 
 export default App;
