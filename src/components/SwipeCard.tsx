@@ -88,7 +88,7 @@ export function SwipeCard({ quote, onSwipe, onFavorite, isFavorited }: SwipeCard
           onClick={(e) => { e.stopPropagation(); onFavorite(quote); }}
           className="w-12 h-12 rounded-full bg-surface-elevated border border-border flex items-center justify-center hover:border-red-400 transition-colors self-center"
         >
-          <Heart className="w-5 h-5 text-red-400" />
+          <Heart className="w-5 h-5 text-red-400" fill={isFavorited ? "currentColor" : "none"} />
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); onSwipe(true); }}
