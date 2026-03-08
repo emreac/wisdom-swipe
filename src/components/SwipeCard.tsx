@@ -9,7 +9,7 @@ interface SwipeCardProps {
   isFavorited?: boolean;
 }
 
-export function SwipeCard({ quote, onSwipe, onFavorite }: SwipeCardProps) {
+export function SwipeCard({ quote, onSwipe, onFavorite, isFavorited }: SwipeCardProps) {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-15, 15]);
   const likeOpacity = useTransform(x, [0, 100], [0, 1]);
