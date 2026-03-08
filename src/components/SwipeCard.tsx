@@ -6,6 +6,7 @@ interface SwipeCardProps {
   quote: Quote;
   onSwipe: (liked: boolean) => void;
   onFavorite: (quote: Quote) => void;
+  isFavorited?: boolean;
 }
 
 export function SwipeCard({ quote, onSwipe, onFavorite }: SwipeCardProps) {
