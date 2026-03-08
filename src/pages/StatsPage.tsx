@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { schoolDescriptions, philosophers } from "@/data/philosophers";
-import { Brain, TrendingUp, Heart, Zap } from "lucide-react";
+import { schoolDescriptions, philosophers, Quote } from "@/data/philosophers";
+import { Brain, TrendingUp, Heart, Zap, X } from "lucide-react";
 
 interface StatsPageProps {
   history: any[];
@@ -10,12 +10,15 @@ interface StatsPageProps {
   schoolScores: Record<string, number>;
   topPhilosopher: { name: string; count: number } | null;
   topSchool: { name: string; count: number } | null;
+  favorites: Quote[];
+  removeFavorite: (quoteId: number) => void;
 }
 
 export default function StatsPage({
   history, likedCount, dislikedCount,
   philosopherScores, schoolScores,
-  topPhilosopher, topSchool
+  topPhilosopher, topSchool,
+  favorites, removeFavorite,
 }: StatsPageProps) {
   const totalSwiped = history.length;
   const philosopherEmoji = (name: string) => philosophers.find(p => p.name === name)?.emoji || "🧠";
@@ -24,7 +27,7 @@ export default function StatsPage({
   const sortedSchools = Object.entries(schoolScores).sort((a, b) => b[1] - a[1]);
   const maxSchoolScore = sortedSchools[0]?.[1] || 1;
 
-  if (totalSwiped === 0) {
+  if (totalSwiped === 0 && favorites.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen px-4 pb-24">
         <Brain className="w-16 h-16 text-muted-foreground mb-4" />
@@ -75,6 +78,41 @@ export default function StatsPage({
           </div>
         ))}
       </div>
+
+      {/* Favorites */}
+      {favorites.length > 0 && (
+        <div className="bg-card rounded-2xl p-6 border border-border">
+          <div className="flex items-center gap-2 mb-4">
+            <Heart className="w-5 h-5 text-red-400" />
+            <h3 className="font-serif text-lg text-foreground">Favorites</h3>
+            <span className="text-xs text-muted-foreground ml-auto">{favorites.length}</span>
+          </div>
+          <div className="space-y-3">
+            {favorites.map((quote, i) => (
+              <motion.div
+                key={quote.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+                className="bg-surface rounded-xl p-4 border border-border relative group"
+              >
+                <button
+                  onClick={() => removeFavorite(quote.id)}
+                  className="absolute top-3 right-3 w-6 h-6 rounded-full bg-surface-elevated border border-border flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X className="w-3 h-3 text-muted-foreground" />
+                </button>
+                <p className="font-serif text-sm text-foreground italic leading-relaxed pr-6">
+                  "{quote.text}"
+                </p>
+                <p className="text-xs text-gold mt-2">
+                  {quote.emoji} {quote.philosopher} · {quote.school}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* School Breakdown */}
       {sortedSchools.length > 0 && (

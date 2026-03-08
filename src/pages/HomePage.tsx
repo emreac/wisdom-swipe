@@ -138,6 +138,7 @@ export default function HomePage({
               key={currentQuote.id}
               quote={currentQuote}
               onSwipe={swipe}
+              onFavorite={addFavorite}
             />
           ) : (
             <div className="text-center space-y-4">
