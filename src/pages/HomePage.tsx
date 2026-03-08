@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { SwipeCard } from "@/components/SwipeCard";
 import { Flame, Sparkles, RefreshCw, Moon } from "lucide-react";
-import { schoolDescriptions } from "@/data/philosophers";
+import { schoolDescriptions, Quote } from "@/data/philosophers";
 
 interface HomePageProps {
   currentQuote: any;
@@ -16,12 +16,13 @@ interface HomePageProps {
   topSchool: { name: string; count: number } | null;
   topPhilosopher: { name: string; count: number } | null;
   schoolScores: Record<string, number>;
+  addFavorite: (quote: Quote) => void;
 }
 
 export default function HomePage({
   currentQuote, remaining, total, swipe, loadMore,
   likedCount, sessionComplete, streak, dailyLimit,
-  topSchool, topPhilosopher, schoolScores,
+  topSchool, topPhilosopher, schoolScores, addFavorite,
 }: HomePageProps) {
   const progress = total > 0 ? ((total - remaining) / total) * 100 : 0;
 
@@ -137,6 +138,7 @@ export default function HomePage({
               key={currentQuote.id}
               quote={currentQuote}
               onSwipe={swipe}
+              onFavorite={addFavorite}
             />
           ) : (
             <div className="text-center space-y-4">

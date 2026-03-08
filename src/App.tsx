@@ -30,6 +30,7 @@ const App = () => {
                 topSchool={store.topSchool}
                 topPhilosopher={store.topPhilosopher}
                 schoolScores={store.schoolScores}
+                addFavorite={store.addFavorite}
               />
             }
           />
@@ -44,6 +45,8 @@ const App = () => {
                 schoolScores={store.schoolScores}
                 topPhilosopher={store.topPhilosopher}
                 topSchool={store.topSchool}
+                favorites={store.favorites}
+                removeFavorite={store.removeFavorite}
               />
             }
           />
