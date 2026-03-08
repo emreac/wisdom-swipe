@@ -60,7 +60,7 @@ export default function HomePage({
       )}
 
       {/* Card area */}
-      <div className="relative w-full max-w-sm h-[460px] flex items-center justify-center">
+      <div className={`relative w-full max-w-sm ${sessionComplete ? "" : "h-[460px]"} flex items-center justify-center`}>
         <AnimatePresence mode="wait">
           {sessionComplete ? (
             <motion.div
