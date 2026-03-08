@@ -16,6 +16,7 @@ interface HomePageProps {
   topSchool: { name: string; count: number } | null;
   topPhilosopher: { name: string; count: number } | null;
   schoolScores: Record<string, number>;
+  addFavorite: (quote: Quote) => void;
 }
 
 export default function HomePage({
