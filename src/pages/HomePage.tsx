@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { SwipeCard } from "@/components/SwipeCard";
 import { Flame, Sparkles, RefreshCw, Moon } from "lucide-react";
 import { schoolDescriptions, Quote } from "@/data/philosophers";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface HomePageProps {
   currentQuote: any;
@@ -25,6 +26,7 @@ export default function HomePage({
   likedCount, sessionComplete, streak, dailyLimit,
   topSchool, topPhilosopher, schoolScores, addFavorite, favorites,
 }: HomePageProps) {
+  const { t } = useLanguage();
   const progress = total > 0 ? ((total - remaining) / total) * 100 : 0;
 
   return (
@@ -32,15 +34,15 @@ export default function HomePage({
       {/* Header with streak */}
       <div className="w-full max-w-sm mb-4">
         <div className="flex items-center justify-between mb-2">
-          <h1 className="text-2xl font-serif text-gold">Philosophia</h1>
+          <h1 className="text-2xl font-serif text-gold">{t("app.title")}</h1>
           <div className="flex items-center gap-1.5 bg-card px-3 py-1.5 rounded-full border border-border">
             <Flame className="w-4 h-4 text-gold" />
             <span className="text-sm font-semibold text-gold">{streak}</span>
-            <span className="text-xs text-muted-foreground">day{streak !== 1 ? "s" : ""}</span>
+            <span className="text-xs text-muted-foreground">{streak !== 1 ? t("home.days") : t("home.day")}</span>
           </div>
         </div>
         <p className="text-muted-foreground text-center text-xs">
-          Swipe to discover your inner philosopher
+          {t("app.subtitle")}
         </p>
       </div>
 
@@ -48,8 +50,8 @@ export default function HomePage({
       {!sessionComplete && (
         <div className="w-full max-w-sm mb-4">
           <div className="flex justify-between text-xs text-muted-foreground mb-2">
-            <span>{total - remaining} / {total} quotes</span>
-            <span className="text-gold">{likedCount} agreed</span>
+            <span>{total - remaining} / {total} {t("home.quotes")}</span>
+            <span className="text-gold">{likedCount} {t("home.agreed")}</span>
           </div>
           <div className="h-1.5 bg-surface-elevated rounded-full overflow-hidden">
             <motion.div
@@ -74,15 +76,15 @@ export default function HomePage({
               {/* Session ended card */}
               <div className="bg-card rounded-2xl p-6 border border-gold/20 card-shadow text-center">
                 <Moon className="w-10 h-10 text-gold mx-auto mb-3" />
-                <h2 className="font-serif text-xl text-foreground mb-1">Today's Session Complete</h2>
+                <h2 className="font-serif text-xl text-foreground mb-1">{t("home.sessionComplete")}</h2>
                 <p className="text-muted-foreground text-sm mb-4">
-                  You've reflected on {total} quotes today
+                  {t("home.reflected", { count: total })}
                 </p>
 
                 {/* Results summary */}
                 {topSchool && (
                   <div className="bg-surface rounded-xl p-4 mb-3 border border-border">
-                    <p className="text-xs text-muted-foreground mb-1">You resonate with</p>
+                    <p className="text-xs text-muted-foreground mb-1">{t("home.resonateWith")}</p>
                     <p className="font-serif text-2xl text-gold">{topSchool.name}</p>
                     <p className="text-xs text-muted-foreground mt-1">
                       {schoolDescriptions[topSchool.name]}
@@ -92,9 +94,9 @@ export default function HomePage({
 
                 {topPhilosopher && (
                   <div className="bg-surface rounded-xl p-3 mb-3 border border-border">
-                    <p className="text-xs text-muted-foreground mb-1">Closest philosopher</p>
+                    <p className="text-xs text-muted-foreground mb-1">{t("home.closestPhilosopher")}</p>
                     <p className="font-serif text-lg text-foreground">{topPhilosopher.name}</p>
-                    <p className="text-xs text-gold">{topPhilosopher.count} agreements</p>
+                    <p className="text-xs text-gold">{topPhilosopher.count} {t("home.agreements")}</p>
                   </div>
                 )}
 
@@ -131,7 +133,7 @@ export default function HomePage({
                 className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full gradient-gold text-primary-foreground font-medium shadow-gold hover:opacity-90 transition-opacity"
               >
                 <RefreshCw className="w-4 h-4" />
-                Bring New Quotes
+                {t("home.newQuotes")}
               </button>
             </motion.div>
           ) : currentQuote ? (
@@ -145,7 +147,7 @@ export default function HomePage({
           ) : (
             <div className="text-center space-y-4">
               <Sparkles className="w-12 h-12 text-gold mx-auto" />
-              <p className="text-muted-foreground text-sm">Loading quotes...</p>
+              <p className="text-muted-foreground text-sm">{t("home.loading")}</p>
             </div>
           )}
         </AnimatePresence>
@@ -154,7 +156,7 @@ export default function HomePage({
       {/* Hint */}
       {currentQuote && !sessionComplete && (
         <p className="text-muted-foreground text-xs mt-4 text-center">
-          ← Swipe left to pass · Swipe right to agree →
+          {t("home.swipeHint")}
         </p>
       )}
     </div>

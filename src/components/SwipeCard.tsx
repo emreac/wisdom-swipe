@@ -1,6 +1,8 @@
 import { motion, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import { Quote } from "@/data/philosophers";
 import { ThumbsUp, ThumbsDown, Heart } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
+import { getTranslatedQuoteText } from "@/i18n/quoteTranslations";
 
 interface SwipeCardProps {
   quote: Quote;
@@ -10,10 +12,13 @@ interface SwipeCardProps {
 }
 
 export function SwipeCard({ quote, onSwipe, onFavorite, isFavorited }: SwipeCardProps) {
+  const { t, language } = useLanguage();
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-15, 15]);
   const likeOpacity = useTransform(x, [0, 100], [0, 1]);
   const nopeOpacity = useTransform(x, [-100, 0], [1, 0]);
+
+  const translatedText = getTranslatedQuoteText(quote.id, language) || quote.text;
 
   const handleDragEnd = (_: any, info: PanInfo) => {
     if (info.offset.x > 100) {
@@ -51,19 +56,19 @@ export function SwipeCard({ quote, onSwipe, onFavorite, isFavorited }: SwipeCard
           className="absolute top-6 right-6 border-2 border-green-500 rounded-lg px-4 py-1"
           style={{ opacity: likeOpacity }}
         >
-          <span className="text-green-500 font-bold text-lg tracking-wider">AGREE</span>
+          <span className="text-green-500 font-bold text-lg tracking-wider">{t("card.agree")}</span>
         </motion.div>
         <motion.div
           className="absolute top-6 left-6 border-2 border-red-500 rounded-lg px-4 py-1"
           style={{ opacity: nopeOpacity }}
         >
-          <span className="text-red-500 font-bold text-lg tracking-wider">PASS</span>
+          <span className="text-red-500 font-bold text-lg tracking-wider">{t("card.pass")}</span>
         </motion.div>
 
         {/* Content */}
         <div className="flex-1 flex items-center justify-center py-8">
           <p className="font-serif text-2xl leading-relaxed text-center text-foreground italic">
-            "{quote.text}"
+            "{translatedText}"
           </p>
         </div>
 
