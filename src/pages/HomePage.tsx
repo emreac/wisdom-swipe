@@ -22,7 +22,7 @@ interface HomePageProps {
 export default function HomePage({
   currentQuote, remaining, total, swipe, loadMore,
   likedCount, sessionComplete, streak, dailyLimit,
-  topSchool, topPhilosopher, schoolScores,
+  topSchool, topPhilosopher, schoolScores, addFavorite,
 }: HomePageProps) {
   const progress = total > 0 ? ((total - remaining) / total) * 100 : 0;
 
