@@ -140,6 +140,7 @@ export default function HomePage({
               quote={currentQuote}
               onSwipe={swipe}
               onFavorite={addFavorite}
+              isFavorited={favorites.some(f => f.id === currentQuote.id)}
             />
           ) : (
             <div className="text-center space-y-4">
