@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { SwipeCard } from "@/components/SwipeCard";
 import { Flame, Sparkles, RefreshCw, Moon } from "lucide-react";
-import { schoolDescriptions } from "@/data/philosophers";
+import { schoolDescriptions, Quote } from "@/data/philosophers";
 
 interface HomePageProps {
   currentQuote: any;
