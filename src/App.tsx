@@ -5,14 +5,20 @@ import StatsPage from "@/pages/StatsPage";
 import LearnPage from "@/pages/LearnPage";
 import SettingsPage from "@/pages/SettingsPage";
 import NotFound from "@/pages/NotFound";
+import OnboardingPage from "@/pages/OnboardingPage";
 import { useSwipeStore } from "@/hooks/useSwipeStore";
+import { useOnboarding } from "@/hooks/useOnboarding";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 
 const App = () => {
   const store = useSwipeStore();
+  const { isOnboardingComplete, completeOnboarding } = useOnboarding();
 
   return (
     <LanguageProvider>
+      {!isOnboardingComplete && (
+        <OnboardingPage onComplete={completeOnboarding} />
+      )}
       <BrowserRouter>
         <div className="min-h-screen bg-background pt-[env(safe-area-inset-top)]">
           <Routes>
@@ -65,7 +71,7 @@ const App = () => {
             />
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <BottomNav />
+          {isOnboardingComplete && <BottomNav />}
         </div>
       </BrowserRouter>
     </LanguageProvider>
